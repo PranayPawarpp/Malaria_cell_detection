@@ -1,0 +1,36 @@
+import os
+import cv2
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import to_categorical
+
+data_dir = r'C:/Users/Pranay Pawar/Documents/cell_images/cell_images'
+infected_dir = os.path.join(data_dir, 'Parasitized')
+uninfected_dir = os.path.join(data_dir, 'Uninfected')
+
+def load_images_from_folder(folder, label):
+    images = []
+    labels = []
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder, filename))
+        if img is not None:
+            img = cv2.resize(img, (64, 64)) 
+            images.append(img)
+            labels.append(label)
+    return images, labels
+
+infected_images, infected_labels = load_images_from_folder(infected_dir, 1)
+uninfected_images, uninfected_labels = load_images_from_folder(uninfected_dir, 0)
+
+images = np.array(infected_images + uninfected_images)
+labels = np.array(infected_labels + uninfected_labels)
+
+X_train, X_test, y_train, y_test = train_test_split(images, labels, test_size=0.2, random_state=42)
+
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+y_train = to_categorical(y_train, 2)
+y_test = to_categorical(y_test, 2)
