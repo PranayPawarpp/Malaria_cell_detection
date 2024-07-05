@@ -1,0 +1,11 @@
+def predict_infection(image_path):
+    img = cv2.imread(image_path)
+    img = cv2.resize(img, (64, 64))
+    img = img / 255.0
+    img = np.expand_dims(img, axis=0)
+    prediction = model.predict(img)
+    return "Parasitized" if np.argmax(prediction) == 1 else "Uninfected"
+
+example_image_path = r'C:/Users/Pranay Pawar/Documents/cell_images/cell_images' 
+result = predict_infection(example_image_path)
+print(f'The predicted result is: {result}')
